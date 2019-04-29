@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/vanikari/Liri-Node-App/issues"
   },
-  "homepage": "https://github.com/vanikari/Liri-Node-App#readme"
+  "homepage": "https://github.com/vanikari/Liri-Node-App#readme",
+  "dependencies": {
+    "dotenv": "^7.0.0"
+  }
 }
