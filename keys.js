@@ -6,4 +6,6 @@ exports.spotify = {
   secret: process.env.SPOTIFY_SECRET
 };
 
-console.log(process.env.SPOTIFY_ID)
+exports.omdb = {
+  api: process.env.OMDB_API
+}
