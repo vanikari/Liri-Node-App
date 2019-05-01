@@ -27,71 +27,76 @@ var userCommand = process.argv[2];
 
 var userInput = process.argv[3];
 
+var log = userCommand + " " + userInput + "\n"
+
 function userQuery (userCommand, userInput) {
     switch (userCommand) {
 
         // Grabbing the concertThis function and displaying 5 of the artist's concert details 
         case "concert-this":
             concertThis (userInput);
+            logIt();
         break;
         
         // grabbing the spotifyThis function and searching for song info and limiting the search to 5 
         case "spotify-this-song":
-            spotifyThis(userInput)
+            spotifyThis(userInput);
+            logIt();
         break;
 
         // Grabbing the omdb api and displaying the info
         case "movie-this":
             movieThis(userInput);
+            logIt();
         break;
 
         // taking the text inside of random.txt and then using it to call one of LIRI's commands.
         case "do-what-it-says":
             doWhatItSays(userInput);
         break;
+
+        // default will be asking the user to select one of the other user commands
+        default:
+        console.log("Choose one of the following commands: \n1. concert-this\n2. spotify-this-song\n3. movie-this\n4. do-what-it-says");
+        console.log("\n----------\n");
+        break;
     }
 
 };
 
+// Calling the userQuery function
 userQuery (userCommand, userInput);
 
 // Grabbing the Bands in Town Api
 function concertThis() {
-
-// User's input of the Artist or Band name
-var artist = userInput;
-
-var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp"
-
-axios.get(queryUrl).then(
-    function(response) {
-        console.log("Artist: " + artist);
-        console.log("\n----------\n");
-        for (var i = 0; i < 5;i++) {
-            console.log("Venue: " + response.data[i].venue.name,
-            "\nLocation: " + response.data[i].venue.city + ", " + response.data[i].venue.country,
-            "\nDate of the event: " + moment(response.data[i].datetime).format('L'));
+    // User's input of the Artist or Band name
+    var artist = userInput;
+    var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp"
+    axios.get(queryUrl).then(
+        function(response) {
+            console.log("Artist: " + artist);
             console.log("\n----------\n");
+            for (var i = 0; i < 5;i++) {
+                console.log("Venue: " + response.data[i].venue.name,
+                "\nLocation: " + response.data[i].venue.city + ", " + response.data[i].venue.country,
+                "\nDate of the event: " + moment(response.data[i].datetime).format('L'));
+                console.log("\n----------\n");
+            }
         }
-    }
-);   
-
+    );   
 }
 
 // grabbing the spotify api using the node package
 function spotifyThis() {
     // user's input of the song name
     var song = userInput;
-
     // if no song is selected
     if (!song){
-        song = 'The ace of base the sing'
+        song = 'The ace of base the sign'
     }
-
     spotify
         .search({ type: 'track', query: song, limit: '5' })
         .then(function(data) {
-
         for (i = 0; i < data.tracks.items.length; i++) {
             console.log("Artist(s): ", data.tracks.items[i].album.artists[0].name);
             console.log("Song: ", data.tracks.items[i].name);
@@ -99,7 +104,6 @@ function spotifyThis() {
             console.log("Album: ", data.tracks.items[i].album.name);
             console.log("\n----------\n");
         };
-            
         })
         .catch(function(err) {
             console.log(err);
@@ -109,14 +113,11 @@ function spotifyThis() {
 function movieThis() {
     // User's input of the movie name
     var movieName = userInput;
-   
     // if user doesn't inpit a movie name
     if (!movieName){
         movieName = 'mr nobody'
     }
- 
     var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey="+ omdbApi;
-   
     axios.get(queryUrl).then(
         function(response) {
             console.log("Movie Title: " + response.data.Title,
@@ -150,4 +151,19 @@ function doWhatItSays() {
     
     
     });
+}
+function logIt() {
+fs.appendFile("log.txt", log, function(err) {
+
+    // If an error was experienced we will log it.
+    if (err) {
+      console.log(err);
+    }
+  
+    // If no error is experienced, content is added to log.txt.
+    else {
+      console.log("User Command logged in log.txt!");
+      console.log("\n----------\n");
+    }
+  });
 }
